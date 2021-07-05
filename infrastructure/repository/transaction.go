@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/dumunari/codebank/domain"
+	"log"
 )
 
 type TransactionRepositoryDb struct {
@@ -11,6 +12,8 @@ type TransactionRepositoryDb struct {
 }
 
 func (t *TransactionRepositoryDb) GetCreditCard(creditCard domain.CreditCard) (domain.CreditCard, error) {
+	log.Println("[Transaction Repository] - GetCreditCard")
+
 	var c domain.CreditCard
 	stmt, err := t.db.Prepare("select id, balance, balance_limit from credit_cards where number=$1")
 	if err = stmt.QueryRow(creditCard.Number).Scan(&c.ID, &c.Balance, &c.Limit); err != nil {
@@ -26,6 +29,8 @@ func NewTransactionRepositoryDb(db *sql.DB) *TransactionRepositoryDb {
 }
 
 func (t *TransactionRepositoryDb) SaveTransaction(transaction domain.Transaction, creditCard domain.CreditCard) error {
+	log.Println("[Transaction Repository] - SaveTransaction")
+
 	stmt, err := t.db.Prepare(`insert into transactions(id, credit_card_id, amount, status, description, store, created_at)
 		values($1, $2, $3, $4, $5, $6, $7)`)
 	if err != nil {
@@ -57,6 +62,8 @@ func (t *TransactionRepositoryDb) SaveTransaction(transaction domain.Transaction
 }
 
 func (t *TransactionRepositoryDb) CreateCreditCard(creditCard domain.CreditCard) error {
+	log.Println("[Transaction Repository] - CreateCreditCard")
+
 	stmt, err := t.db.Prepare(`insert into credit_cards(id, name, number, expiration_month, expiration_year, cvv, balance, balance_limit) 
 								values($1, $2, $3, $4, $5, $6, $7, $8)`)
 	if err != nil {
@@ -82,6 +89,8 @@ func (t *TransactionRepositoryDb) CreateCreditCard(creditCard domain.CreditCard)
 }
 
 func (t *TransactionRepositoryDb) updateBalance(creditCard domain.CreditCard) error {
+	log.Println("[Transaction Repository] - updateBalance")
+
 	_, err := t.db.Exec(`update credit_cards set balance = $1 where id = $2`, creditCard.Balance, creditCard.ID)
 	if err != nil {
 		return err

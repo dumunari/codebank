@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/dumunari/codebank/domain"
 	"github.com/dumunari/codebank/dto"
+	"log"
 	"time"
 )
 
@@ -15,6 +16,8 @@ func NewUseCaseTransaction(transactionRepository domain.TransactionRepository) U
 }
 
 func (u UseCaseTransaction) ProcessTransaction(transactionDto dto.Transaction) (domain.Transaction, error) {
+	log.Println("[UseCase] - ProcessTransaction")
+
 	creditCard := u.hydrateCreditCard(transactionDto)
 	ccBalanceAndLimit, err := u.TransactionRepository.GetCreditCard(*creditCard)
 	if err != nil {
@@ -33,6 +36,8 @@ func (u UseCaseTransaction) ProcessTransaction(transactionDto dto.Transaction) (
 }
 
 func (u UseCaseTransaction) hydrateCreditCard(transactionDto dto.Transaction) *domain.CreditCard {
+	log.Println("[UseCase] - hydrateCreditCard")
+
 	creditCard := domain.NewCreditCard()
 	creditCard.Name = transactionDto.Name
 	creditCard.Number = transactionDto.Number
@@ -43,6 +48,8 @@ func (u UseCaseTransaction) hydrateCreditCard(transactionDto dto.Transaction) *d
 }
 
 func (u UseCaseTransaction) newTransaction(transactionDto dto.Transaction, cc domain.CreditCard) *domain.Transaction {
+	log.Println("[UseCase] - newTransaction")
+
 	t := domain.NewTransaction()
 	t.CreditCardId = cc.ID
 	t.Amount = transactionDto.Amount
