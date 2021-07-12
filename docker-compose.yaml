@@ -5,7 +5,7 @@ services:
     container_name: appbank
     build: .
     ports:
-      - "50052:50051"
+      - "50052:50052"
     volumes:
       - .:/go/src/
     extra_hosts:
@@ -16,7 +16,7 @@ services:
     restart: always
     tty: true
     volumes:
-      - .pgdata:/var/lib/postgresql/data
+      - .docker/app/.pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=codebank
